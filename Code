@@ -1,0 +1,80 @@
+import pandas as pd
+import streamlit as st
+import plotly.express as px
+
+# Read CSV data into a DataFrame
+def read_csv_from_input():
+    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+    if uploaded_file is not None:
+        return pd.read_csv(uploaded_file)
+    else:
+        return None
+
+# Generate Scatter Plot
+def generate_scatter_plot(df, x_col, y_col):
+    fig = px.scatter(df, x=x_col, y=y_col)
+    st.plotly_chart(fig)
+
+# Generate Bar Plot
+def generate_bar_plot(df, x_col, y_col):
+    fig = px.bar(df, x=x_col, y=y_col)
+    st.plotly_chart(fig)
+
+# Generate Box Plot
+def generate_box_plot(df, x_col, y_col):
+    fig = px.box(df, x=x_col, y=y_col)
+    st.plotly_chart(fig)
+
+# Generate Histogram
+def generate_histogram(df, column):
+    fig = px.histogram(df, x=column)
+    st.plotly_chart(fig)
+
+# Chatbot function to perform basic pandas operations
+def chatbot_operations(df):
+    st.subheader("Chat with the Pandas Bot:")
+    operations = ["Describe", "Head", "Tail", "Sample"]
+    selected_operation = st.selectbox("Select operation:", operations)
+
+    if st.button("Execute"):
+        if selected_operation == "Describe":
+            st.write(df.describe())
+        elif selected_operation == "Head":
+            st.write(df.head())
+        elif selected_operation == "Tail":
+            st.write(df.tail())
+        elif selected_operation == "Sample":
+            st.write(df.sample())
+
+# Main function
+def main():
+    st.title("Interactive Plot Generator")
+
+    df = read_csv_from_input()
+
+    if df is not None:
+        plot_type = st.selectbox("Select the type of plot", ["Scatter Plot", "Bar Plot", "Box Plot", "Histogram"])
+
+        if plot_type == "Scatter Plot":
+            x_col = st.selectbox("Select x-axis column", df.columns)
+            y_col = st.selectbox("Select y-axis column", df.columns)
+            generate_scatter_plot(df, x_col, y_col)
+        elif plot_type == "Bar Plot":
+            x_col = st.selectbox("Select x-axis column", df.columns)
+            y_col = st.selectbox("Select y-axis column", df.columns)
+            generate_bar_plot(df, x_col, y_col)
+        elif plot_type == "Box Plot":
+            x_col = st.selectbox("Select x-axis column", df.columns)
+            y_col = st.selectbox("Select y-axis column", df.columns)
+            generate_box_plot(df, x_col, y_col)
+        elif plot_type == "Histogram":
+            column = st.selectbox("Select column for histogram", df.columns)
+            generate_histogram(df, column)
+
+        # Call chatbot function to perform pandas operations
+        chatbot_operations(df)
+    else:
+        st.write("Please upload a CSV file to proceed.")
+
+if __name__ == "__main__":
+    main()
